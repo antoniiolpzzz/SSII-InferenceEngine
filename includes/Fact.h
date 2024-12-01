@@ -13,7 +13,7 @@ class Fact {
         Fact() {}
         ~Fact();
         Fact(const std::string &identifier, double certaintyFactor);
-        std::string getIdentifier();
+        std::string getIdentifier() const;
         double getCertaintyFactor() const;
 
     private:

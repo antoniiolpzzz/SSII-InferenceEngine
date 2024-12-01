@@ -15,8 +15,8 @@ class Rule {
         Rule(int identifier, double certaintyFactor, const std::string &antecedent, const std::string &consequent);
         int getIdentifier() const;
         double getCertaintyFactor() const;
-        std::string getAntecedent();
-        std::string getConsequent();
+        std::string getAntecedent() const;
+        std::string getConsequent() const;
 
 
     private:

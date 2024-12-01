@@ -9,7 +9,7 @@ Fact::Fact(const std::string &identifier, const double certaintyFactor) {
     this->certaintyFactor = certaintyFactor;
 }
 
-std::string Fact::getIdentifier() {
+std::string Fact::getIdentifier() const {
     return identifier;
 }
 

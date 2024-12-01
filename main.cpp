@@ -7,9 +7,12 @@
 
 #include "Rule.h"
 #include "Fact.h"
+#include "FactBase.h"
 #include "KnowledgeBase.h"
 
-int main() {
+int main(int argc, char *argv[]) {
+
+    /*
     std::cout << "Hello, World!" << std::endl;
 
     std::vector<Rule> rules;
@@ -47,6 +50,38 @@ int main() {
         std::cout << "Fact: " << fact.getIdentifier()
         << " | FC:" << fact.getCertaintyFactor() << std::endl;
     }
+    */
+
+    if (argc >= 3) {
+        std::ifstream inputFileBC;
+        inputFileBC.open(argv[1], std::ifstream::in);
+        std::ifstream inputFileBH;
+        inputFileBH.open(argv[2], std::ifstream::in);
+
+        //create knowledge base and fact base
+
+        KnowledgeBase knowledgeBase(inputFileBC);
+        FactBase factBase(inputFileBH);
+
+        Rule* rules = knowledgeBase.getRules();
+        for (int i = 0; i < knowledgeBase.getNumberOfRules(); i++) {
+            Rule rule = rules[i];
+            std::cout << "Rule: " << rule.getIdentifier()
+            << " | FC:" << rule.getCertaintyFactor()
+            << " | Ant:" << rule.getAntecedent()
+            << " | Con:" << rule.getConsequent() << std::endl;
+        }
+
+        for (int i = 0; i < factBase.getNumberOfFacts(); i++) {
+            Fact fact = factBase.getFacts()[i];
+            std::cout << "Fact: " << fact.getIdentifier()
+            << " | FC:" << fact.getCertaintyFactor() << std::endl;
+        }
+        std::cout << "Goal: " << factBase.getGoal().getIdentifier() << std::endl;
+
+
+    }
+
 
     return 0;
 }

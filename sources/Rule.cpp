@@ -20,11 +20,11 @@ double Rule::getCertaintyFactor() const {
     return certaintyFactor;
 }
 
-std::string Rule::getAntecedent() {
+std::string Rule::getAntecedent() const {
     return antecedent;
 }
 
-std::string Rule::getConsequent() {
+std::string Rule::getConsequent() const {
     return consequent;
 }
 
