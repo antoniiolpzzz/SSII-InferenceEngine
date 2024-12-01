@@ -68,7 +68,7 @@ void KnowledgeBase::toString() const {
     for (const auto &rule : rules) {
         std::cout << "Rule: " << rule.getIdentifier()
                   << " | FC:" << rule.getCertaintyFactor()
-                  << " | Ant:" << rule.getAntecedent()
+                  << " | Ant:" << rule.getJoinedAntecedents()
                   << " | Con:" << rule.getConsequent() << std::endl;
     }
 }
