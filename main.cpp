@@ -35,8 +35,6 @@ int main(int argc, char *argv[]) {
     facts.push_back(fact3);
 
 
-
-
     for (auto &rule : rules) {
         std::cout << "Rule: " << rule.getIdentifier()
         << " | FC:" << rule.getCertaintyFactor()
@@ -63,22 +61,20 @@ int main(int argc, char *argv[]) {
         KnowledgeBase knowledgeBase(inputFileBC);
         FactBase factBase(inputFileBH);
 
-        Rule* rules = knowledgeBase.getRules();
-        for (int i = 0; i < knowledgeBase.getNumberOfRules(); i++) {
-            Rule rule = rules[i];
+        std::vector<Rule> rules = knowledgeBase.getRules();
+
+        for (const auto &rule : rules) {
             std::cout << "Rule: " << rule.getIdentifier()
             << " | FC:" << rule.getCertaintyFactor()
             << " | Ant:" << rule.getAntecedent()
             << " | Con:" << rule.getConsequent() << std::endl;
         }
 
-        for (int i = 0; i < factBase.getNumberOfFacts(); i++) {
-            Fact fact = factBase.getFacts()[i];
+        for (const auto &fact : factBase.getFacts()) {
             std::cout << "Fact: " << fact.getIdentifier()
             << " | FC:" << fact.getCertaintyFactor() << std::endl;
         }
         std::cout << "Goal: " << factBase.getGoal().getIdentifier() << std::endl;
-
 
     }
 

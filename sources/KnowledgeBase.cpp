@@ -20,7 +20,7 @@ KnowledgeBase::KnowledgeBase(std::ifstream &inputFile) {
     while (std::getline(inputFile, line)) {
         if (i == 0) {
             this->numberOfRules = std::stoi(line);
-            this->rules = new Rule[numberOfRules];
+            this->rules.reserve(numberOfRules);
         } else if (i <= numberOfRules) {
             //std::regex pattern(R"(R(\d+): Si (.+) Entonces (.+), FC=(\d+\.\d+))");
             std::regex pattern(R"(R(\d+): Si (.+) Entonces (.+), FC=(-?\d+(\.\d+)?))");
@@ -31,7 +31,7 @@ KnowledgeBase::KnowledgeBase(std::ifstream &inputFile) {
                 consequent = matches[3].str();
                 certaintyFactor = std::stod(matches[4].str());
 
-                this->rules[i - 1] = Rule(std::stoi(identifier), certaintyFactor, antecedent, consequent);
+                this->rules.push_back(Rule(std::stoi(identifier), certaintyFactor, antecedent, consequent));
             }
 
         } else {
@@ -44,19 +44,16 @@ KnowledgeBase::KnowledgeBase(std::ifstream &inputFile) {
 
 KnowledgeBase::KnowledgeBase(const KnowledgeBase &knowledgeBase) {
     this->numberOfRules = knowledgeBase.numberOfRules;
-    this->rules = new Rule[numberOfRules];
-    for (int i = 0; i < numberOfRules; i++) {
-        this->rules[i] = knowledgeBase.rules[i];
-    }
+    this->rules = knowledgeBase.rules;
 }
 
 
 KnowledgeBase::~KnowledgeBase() {
-    delete[] rules;
+    rules.clear();
 }
 
 
-Rule *KnowledgeBase::getRules() const {
+std::vector<Rule> KnowledgeBase::getRules() const {
     return rules;
 }
 
@@ -67,10 +64,11 @@ int KnowledgeBase::getNumberOfRules() const {
 
 void KnowledgeBase::toString() const {
     std::cout << "KnowledgeBase: " << std::endl;
-    for (int i = 0; i < numberOfRules; i++) {
-        std::cout << "Rule: " << rules[i].getIdentifier()
-                  << " | FC:" << rules[i].getCertaintyFactor()
-                  << " | Ant:" << rules[i].getAntecedent()
-                  << " | Con:" << rules[i].getConsequent() << std::endl;
+
+    for (const auto &rule : rules) {
+        std::cout << "Rule: " << rule.getIdentifier()
+                  << " | FC:" << rule.getCertaintyFactor()
+                  << " | Ant:" << rule.getAntecedent()
+                  << " | Con:" << rule.getConsequent() << std::endl;
     }
 }

@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include "Rule.h"
+#include <vector>
 
 /**
  * The KnowledgeBase class represents the knowledge base of the expert system.
@@ -35,7 +36,7 @@ class KnowledgeBase {
      * Getter of the rules array.
      * @return the rules array.
      */
-    Rule* getRules() const;
+    std::vector<Rule> getRules() const;
 
     /**
      * Getter of the number of rules.
@@ -55,7 +56,7 @@ class KnowledgeBase {
     /**
      * The array of rules.
      */
-    Rule* rules;
+    std::vector<Rule> rules;
 
     /**
      * The number of rules.
