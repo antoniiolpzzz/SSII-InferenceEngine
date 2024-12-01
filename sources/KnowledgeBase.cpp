@@ -48,11 +48,6 @@ KnowledgeBase::KnowledgeBase(const KnowledgeBase &knowledgeBase) {
 }
 
 
-KnowledgeBase::~KnowledgeBase() {
-    rules.clear();
-}
-
-
 std::vector<Rule> KnowledgeBase::getRules() const {
     return rules;
 }

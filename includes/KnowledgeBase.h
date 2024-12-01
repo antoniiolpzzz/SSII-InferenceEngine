@@ -18,7 +18,7 @@ class KnowledgeBase {
     /**
      * Destructor of the KnowledgeBase class.
      */
-    ~KnowledgeBase();
+    ~KnowledgeBase() = default;
 
     /**
      * Constructor of the KnowledgeBase class.
