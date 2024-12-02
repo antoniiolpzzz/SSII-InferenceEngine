@@ -31,7 +31,7 @@ KnowledgeBase::KnowledgeBase(std::ifstream &inputFile) {
                 consequent = matches[3].str();
                 certaintyFactor = std::stod(matches[4].str());
 
-                this->rules.push_back(Rule(std::stoi(identifier), certaintyFactor, antecedent, consequent));
+                this->rules.emplace_back(std::stoi(identifier), certaintyFactor, antecedent, consequent);
             }
 
         } else {

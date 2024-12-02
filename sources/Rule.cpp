@@ -63,7 +63,7 @@ void Rule::parseAntecedents(const std::string &antecedents) {
     while (std::getline(antecedentsStream, currentToken, ' ')) {
 
         if (currentToken != DISJUNCTION && currentToken != CONJUNCTION) {
-            this->antecedents.push_back(currentToken);
+            this->antecedents.emplace_back(currentToken);
         }else {
             this->ruleType = currentToken;
         }

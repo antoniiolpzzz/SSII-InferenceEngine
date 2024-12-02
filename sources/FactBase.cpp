@@ -39,7 +39,7 @@ FactBase::FactBase(std::ifstream &inputFile) {
                 identifier = matches[1].str();
                 certaintyFactor = std::stod(matches[2].str());
 
-                this->facts.push_back(Fact(identifier, certaintyFactor));
+                this->facts.emplace_back(Fact(identifier, certaintyFactor));
             }
         } else if (i == numberOfFacts + 1) {
             std::getline(inputFile, line);
@@ -105,7 +105,7 @@ int FactBase::getNumberOfFacts() const {
 
 void FactBase::addFact(const Fact& fact) {
 
-    facts.push_back(fact);
+    facts.emplace_back(fact);
     numberOfFacts++;
 }
 

@@ -36,17 +36,17 @@ double InferenceEngine::backwardChaining(Fact &goal) {
             double currentGoalCertaintyFactor = this->backwardChaining(currentGoal);
             currentGoal.setCertaintyFactor(currentGoalCertaintyFactor); //TEST THIS LINE
             this->factBase.addFact(currentGoal);
-            //antecedentsCertaintyFactors.push_back(currentGoalCertaintyFactor);
+            //antecedentsCertaintyFactors.emplace_back(currentGoalCertaintyFactor);
         }
 
         double antecedentsCertaintyFactor = this->resolveAntecedentsCombinedCertaintyFactor(currentRule);
 
         double singleRuleFactCertaintyFactor = resolveSingleRuleFactCertaintyFactor(currentRule, goal, antecedentsCertaintyFactor);
-        rulesCertaintyFactors.push_back(singleRuleFactCertaintyFactor);
+        rulesCertaintyFactors.emplace_back(singleRuleFactCertaintyFactor);
 
     }
 
-    double multipleRuleFactCertaintyFactor = resolveMultipleRuleFactCertaintyFactor(goal, rulesCertaintyFactors);
+    const double multipleRuleFactCertaintyFactor = resolveMultipleRuleFactCertaintyFactor(goal, rulesCertaintyFactors);
 
     goal.setCertaintyFactor(multipleRuleFactCertaintyFactor);
     return multipleRuleFactCertaintyFactor;
@@ -167,7 +167,7 @@ std::vector<Rule> InferenceEngine::obtainRulesWithGivenConsequent(const std::str
 
     for (const auto &rule : this->knowledgeBase.getRules()) {
         if (rule.getConsequent() == consequent) {
-            rulesWithGivenConsequent.push_back(rule);
+            rulesWithGivenConsequent.emplace_back(rule);
         }
     }
 
