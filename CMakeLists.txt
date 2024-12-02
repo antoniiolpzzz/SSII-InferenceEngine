@@ -10,6 +10,7 @@ add_executable(SSII_MotorInferencia main.cpp
         sources/Rule.cpp includes/Rule.h
         sources/KnowledgeBase.cpp includes/KnowledgeBase.h
         sources/FactBase.cpp includes/FactBase.h
+        sources/InferenceEngine.cpp includes/InferenceEngine.h
         )
 
 # Generate windows executable

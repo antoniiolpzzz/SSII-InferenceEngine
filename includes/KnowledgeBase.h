@@ -16,6 +16,11 @@ class KnowledgeBase {
 
   public:
     /**
+     * Default constructor of the KnowledgeBase class.
+     */
+    KnowledgeBase() = default;
+
+    /**
      * Destructor of the KnowledgeBase class.
      */
     ~KnowledgeBase() = default;

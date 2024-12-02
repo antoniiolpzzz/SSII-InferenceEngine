@@ -10,20 +10,23 @@
 #include <vector>
 #include "Fact.h"
 
+constexpr double CERTAINTY_FACTOR_MIN_THRESHOLD  = -DBL_MAX;
+constexpr double CERTAINTY_FACTOR_MAX_THRESHOLD = DBL_MAX;
 
 class FactBase {
 
     public:
-        ~FactBase();
+        FactBase() = default;
+        ~FactBase() = default;
         explicit FactBase(std::ifstream &inputFile);
         FactBase(const FactBase &factBase);
-        Fact isFactInBase(const Fact& fact) const;
-        Fact getGoal() const;
+        Fact getFactFromBase(const Fact& fact) const;
+        Fact getFactFromBase(const std::string& identifier) const;
+        Fact getGoal();
         std::vector<Fact> getFacts() const;
         int getNumberOfFacts() const;
         void addFact(const Fact& fact);
 
-        const double CERTAINTY_FACTOR_THRESHOLD = -DBL_MAX;
 
         void toString() const;
 

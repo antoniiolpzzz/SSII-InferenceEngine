@@ -60,12 +60,6 @@ void Rule::parseAntecedents(const std::string &antecedents) {
     std::istringstream antecedentsStream(antecedents);
     this->ruleType = ATOMIC;
 
-    //if (antecedents.find(" " + OR + " ") != std::string::npos) {
-    //    this->ruleType = OR;
-    //} else if (antecedents.find(" " + AND + " ") != std::string::npos) {
-    //    this->ruleType = AND;
-    //}
-
     while (std::getline(antecedentsStream, currentToken, ' ')) {
 
         if (currentToken != DISJUNCTION && currentToken != CONJUNCTION) {

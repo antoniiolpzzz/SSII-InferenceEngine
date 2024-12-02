@@ -65,18 +65,30 @@ FactBase::FactBase(const FactBase &factBase) {
 }
 
 
-Fact FactBase::isFactInBase(const Fact& fact) const {
+Fact FactBase::getFactFromBase(const std::string &identifier) const {
+
+    for (const auto &potentialFact : facts) {
+        if (potentialFact.getIdentifier() == identifier) {
+            return potentialFact;
+        }
+    }
+    return Fact("", CERTAINTY_FACTOR_MIN_THRESHOLD);
+}
+
+
+
+Fact FactBase::getFactFromBase(const Fact& fact) const {
 
     for (const auto &potentialFact : facts) {
         if (potentialFact.getIdentifier() == fact.getIdentifier()) {
             return potentialFact;
         }
     }
-    return Fact("", CERTAINTY_FACTOR_THRESHOLD);
+    return Fact("", CERTAINTY_FACTOR_MIN_THRESHOLD);
 }
 
 
-Fact FactBase::getGoal() const {
+Fact FactBase::getGoal() {
     return goal;
 }
 
@@ -98,9 +110,6 @@ void FactBase::addFact(const Fact& fact) {
 }
 
 
-FactBase::~FactBase() {
-    facts.clear();
-}
 
 
 void FactBase::toString() const {
