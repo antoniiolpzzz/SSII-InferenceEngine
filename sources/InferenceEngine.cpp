@@ -99,64 +99,36 @@ double InferenceEngine::resolveAntecedentsCombinedCertaintyFactor(const Rule &ru
 
 
 double InferenceEngine::resolveSingleRuleFactCertaintyFactor(const Rule &rule, const Fact &goal, const double antecedentsCertaintyFactors) {
-    double ruleCertaintyFactor = rule.getCertaintyFactor();
 
-    double singleRuleFactCertaintyFactor = ruleCertaintyFactor * std::max(0.0, antecedentsCertaintyFactors);
+    const double ruleCertaintyFactor = rule.getCertaintyFactor();
+    return (ruleCertaintyFactor * std::max(0.0, antecedentsCertaintyFactors));
+    //TODO: CHECK IF STD::MAX METHODS IS AVAILABLE ON EVA WINDOWS ENVIRONMENT
 
-    //TODO: CHECK IF STD::MAX METHOS IS AVAILABLE ON EVA WINDOWS ENVIORNMENT
-
-    return singleRuleFactCertaintyFactor;
 }
 
 
 
 double InferenceEngine::resolveMultipleRuleFactCertaintyFactor(const Fact &goal, std::vector<double>& rulesCertaintyFactors) {
 
-    double multipleRuleFactCertaintyFactor;
+    while (rulesCertaintyFactors.size() > 1) {
+        double firstRuleCertaintyFactor = rulesCertaintyFactors.back();
+        rulesCertaintyFactors.pop_back();
+        double secondRuleCertaintyFactor = rulesCertaintyFactors.back();
+        rulesCertaintyFactors.pop_back();
 
-    if (const unsigned int numberOfRules = rulesCertaintyFactors.size(); numberOfRules == 0) {
-        //TODO: CHECK IF I NEED TO THROW AN EXCEPTION OR DO SOMETHING ELSE OR USE SOME VALUE
-        //TODO: IM NOT SURE THIS VALUE BELONGS HERE
-        multipleRuleFactCertaintyFactor = 0.0;
-
-    } else if (numberOfRules == 1) {
-        multipleRuleFactCertaintyFactor = rulesCertaintyFactors.back();
-
-
-    } else {
-
-        double firstRuleCertaintyFactor;
-        double secondRuleCertaintyFactor;
-        if (numberOfRules == 2) {
-            firstRuleCertaintyFactor = rulesCertaintyFactors.back();
-            rulesCertaintyFactors.pop_back();
-            secondRuleCertaintyFactor = rulesCertaintyFactors.back();
-            rulesCertaintyFactors.pop_back();
-
-        } else {
-            firstRuleCertaintyFactor = rulesCertaintyFactors.back();
-            rulesCertaintyFactors.pop_back();
-
-            secondRuleCertaintyFactor = resolveMultipleRuleFactCertaintyFactor(goal, rulesCertaintyFactors);
-            rulesCertaintyFactors.clear();
-        }
-
-        if ( firstRuleCertaintyFactor >= 0 && secondRuleCertaintyFactor >= 0) {
-            multipleRuleFactCertaintyFactor = firstRuleCertaintyFactor + secondRuleCertaintyFactor - (firstRuleCertaintyFactor * secondRuleCertaintyFactor);
-
-
+        double multipleRuleCertaintyFactor;
+        if (firstRuleCertaintyFactor >= 0 && secondRuleCertaintyFactor >= 0) {
+            multipleRuleCertaintyFactor = firstRuleCertaintyFactor + secondRuleCertaintyFactor - (firstRuleCertaintyFactor * secondRuleCertaintyFactor);
         } else if (firstRuleCertaintyFactor <= 0 && secondRuleCertaintyFactor <= 0) {
-            multipleRuleFactCertaintyFactor = firstRuleCertaintyFactor + secondRuleCertaintyFactor + (firstRuleCertaintyFactor * secondRuleCertaintyFactor);
-
-
+            multipleRuleCertaintyFactor = firstRuleCertaintyFactor + secondRuleCertaintyFactor + (firstRuleCertaintyFactor * secondRuleCertaintyFactor);
         } else {
-            multipleRuleFactCertaintyFactor = (firstRuleCertaintyFactor + secondRuleCertaintyFactor)
-                                            / (1 - std::min(abs(firstRuleCertaintyFactor), abs(secondRuleCertaintyFactor)));
-
+            multipleRuleCertaintyFactor = (firstRuleCertaintyFactor + secondRuleCertaintyFactor) / (1 - std::min(abs(firstRuleCertaintyFactor), abs(secondRuleCertaintyFactor)));
         }
 
+        rulesCertaintyFactors.emplace_back(multipleRuleCertaintyFactor);
     }
-    return multipleRuleFactCertaintyFactor;
+    //TODO: CHECK WHETHER I NEED TO RETURN 0.0 OR ANOTHER VALUE
+    return rulesCertaintyFactors.empty() ? 0.0 : rulesCertaintyFactors.back();
 }
 
 
@@ -170,7 +142,6 @@ std::vector<Rule> InferenceEngine::obtainRulesWithGivenConsequent(const std::str
             rulesWithGivenConsequent.emplace_back(rule);
         }
     }
-
     return rulesWithGivenConsequent;
 }
 
