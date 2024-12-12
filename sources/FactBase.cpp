@@ -41,6 +41,16 @@ FactBase::FactBase(std::ifstream &inputFile) {
 
                 this->facts.emplace_back(Fact(identifier, certaintyFactor));
             }
+            else {
+
+                std::string throwMessage = "Formato de archivo de entrada inválido alguna de las Bases de Hechos, en el hecho numero "
+                                            + std::to_string(i)
+                                            + ". Verifique el formato del archivo de entrada.";
+
+                std::cerr << throwMessage << std::endl;
+                std::exit(EXIT_FAILURE);
+            }
+
         } else if (i == numberOfFacts + 1) {
             std::getline(inputFile, line);
             std::smatch goalMatches;
