@@ -10,118 +10,74 @@
 #include "FactBase.h"
 #include "InferenceEngine.h"
 #include "KnowledgeBase.h"
+#include "Utils.h"
 
 int main(int argc, char *argv[]) {
 
-
     if (argc >= 3) {
-        std::filesystem::path path1(argv[1]);
-        std::filesystem::path path2(argv[2]);
 
-        std::cout << path1.stem() << std::endl;
-        std::cout << path2.stem() << std::endl;
+        for (int i = 2; i < argc; i++){
 
-        std::string outputFileName;
-        outputFileName = path1.stem().string() + "_" + path2.stem().string() + ".txt";
+            std::filesystem::path path1(argv[1]);
+            std::filesystem::path path2(argv[i]);
 
-        std::ofstream outputFile(outputFileName);
+            std::cout << "Processing KnowledgeBase: " << path1.stem() << std::endl;
+            std::cout << "Processing FactBase: " << path2.stem() << std::endl;
+            std::cout << std::endl;
 
-        std::streambuf* coutBuffer = std::cout.rdbuf();
-        std::cout.rdbuf(outputFile.rdbuf());
+            std::string outputFileName;
+            outputFileName = path1.stem().string() + "_" + path2.stem().string() + LOG_FILE_EXTENSION;
 
+            std::ofstream outputFile(outputFileName);
 
-        if (!outputFile) {
-            std::cerr << "Error: No se ha podido abrir el fichero en el que se producirá la salida. " << std::endl
-                      << "Compruebe que el fichero es accesible y en ultima instancia borre cualquier "
-                      << "fichero con el siguiente nombre \"" << outputFileName << "\" en el directorio actual."
-                      << std::endl;
-            return 1;
-        }
+            std::streambuf* coutBuffer = std::cout.rdbuf();
+            std::cout.rdbuf(outputFile.rdbuf());
 
 
-    //MAIN
+            if (!outputFile) {
+                std::cerr << "Error: No se ha podido abrir el fichero en el que se producirá la salida. " << std::endl
+                          << "Compruebe que el fichero es accesible y en ultima instancia borre cualquier "
+                          << "fichero con el siguiente nombre \"" << outputFileName << "\" en el directorio actual."
+                          << std::endl;
+                return 1;
+            }
 
 
-        if (argc >= 3) {
             std::ifstream inputFileBC;
             inputFileBC.open(argv[1], std::ifstream::in);
             std::ifstream inputFileBH;
-            inputFileBH.open(argv[2], std::ifstream::in);
+            inputFileBH.open(argv[i], std::ifstream::in);
 
-            //create knowledge base and fact base
+
 
             KnowledgeBase knowledgeBase(inputFileBC);
             FactBase factBase(inputFileBH);
             InferenceEngine inferenceEngine(knowledgeBase, factBase);
-
-//
-            //std::vector<Rule> rules = knowledgeBase.getRules();
-//
-            //for (const auto &rule : rules) {
-            //    std::cout << "Rule: " << rule.getIdentifier()
-            //    << " | FC:" << rule.getCertaintyFactor()
-            //    << " | Ant:" << rule.getJoinedAntecedents()
-            //    << " | Con:" << rule.getConsequent() << std::endl;
-            //}
-//
-            //for (const auto &fact : factBase.getFacts()) {
-            //    std::cout << "Fact: " << fact.getIdentifier()
-            //    << " | FC:" << fact.getCertaintyFactor() << std::endl;
-            //}
-            //std::cout << "Goal: " << factBase.getGoal().getIdentifier() << std::endl;
-//
-            //knowledgeBase.toString();
-            //factBase.toString();
-
             Fact goal = factBase.getGoal();
-            std::cout << factBase.getGoal().getIdentifier() << " ,FC=" << inferenceEngine.backwardChaining(goal) << std::endl;
+
+            printLogHeader(path1.stem(), path2.stem(), goal);
+
+            inferenceEngine.backwardChaining(goal);
+
+            printLogFooter(goal);
+
+            outputFile.close();
+            std::cout.rdbuf(coutBuffer);
         }
 
+    } else {
 
-    //MAIN
+        std::string binaryRelativePath = std::filesystem::path(argv[0]).filename().string();
 
+            std::cerr << "Error: No se han proporcionado suficientes argumentos. "
+                    << "Por favor, introduzca al menos dos ficheros de entrada." << std::endl
+                    << "Siga la siguiente convencion: ./" << binaryRelativePath << " <ficheroBC> <ficheroBH1> ... <ficheroBHn>" << std::endl
+                    << "Para n = numero de Bases de Hechos a procesar." << std::endl << std::endl
+                    << "Para mas información consulte el manual de usuario. En caso de que el problema persista, contacte con el autor del programa." << std::endl;
 
-        outputFile.close();
+            return 1;
     }
 
-
-
-    /*
-    std::cout << "Hello, World!" << std::endl;
-
-    std::vector<Rule> rules;
-    std::vector<Fact> facts;
-
-    Rule rule1(1, 0.8, "A", "B");
-    Rule rule2(2, 0.6, "B", "C");
-    Rule rule3(3, 0.4, "C", "D");
-
-    Fact fact1("A", 0.9);
-    Fact fact2("B", 0.7);
-    Fact fact3("C", 0.5);
-
-    rules.push_back(rule1);
-    rules.push_back(rule2);
-    rules.push_back(rule3);
-
-    facts.push_back(fact1);
-    facts.push_back(fact2);
-    facts.push_back(fact3);
-
-
-    for (auto &rule : rules) {
-        std::cout << "Rule: " << rule.getIdentifier()
-        << " | FC:" << rule.getCertaintyFactor()
-        << " | Ant:" << rule.getAntecedent()
-        << " | Con:" << rule.getConsequent() << std::endl;
-    }
-
-    std::cout << std::endl;
-
-    for (auto &fact : facts) {
-        std::cout << "Fact: " << fact.getIdentifier()
-        << " | FC:" << fact.getCertaintyFactor() << std::endl;
-    }
-    */
+    return 0;
 
 }
