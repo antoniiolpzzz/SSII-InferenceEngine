@@ -1,0 +1,9 @@
+6
+antiguedadConductor2o3, FC=-1
+antiguedadConductorMas3, FC=1
+conduce2o3Horas, FC=1
+conduceMas3Horas, FC=-1
+noViajaSolo, FC=-1
+conductorJoven, FC=0.4
+Objetivo
+causanteAccidente
