@@ -51,11 +51,9 @@ class KnowledgeBase {
 
     /**
      * Method to print the rules of the knowledge base.
+     * Used during the development of the expert system.
      */
     void toString() const;
-
-    /*TODO: CHECK WHETHER I NEED A "TOSTRING" LIKE METHOD IN ORDER TO
-     * ACCOMPLISH THE PRACTICE REQUIREMENTS OR IS NOT NECESSARY*/
 
   private:
     /**
