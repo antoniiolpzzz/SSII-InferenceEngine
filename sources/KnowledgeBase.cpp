@@ -33,6 +33,14 @@ KnowledgeBase::KnowledgeBase(std::ifstream &inputFile) {
 
                 this->rules.emplace_back(std::stoi(identifier), certaintyFactor, antecedent, consequent);
             }
+            else {
+                std::string throwMessage = "Formato de la Base de Conocimientos de entrada inválido, en la regla numero "
+                                                            + std::to_string(i)
+                                                            + ". Verifique el formato del archivo de entrada.";
+
+                std::cerr << throwMessage << std::endl;
+                std::exit(EXIT_FAILURE);
+            }
 
         } else {
             break;
