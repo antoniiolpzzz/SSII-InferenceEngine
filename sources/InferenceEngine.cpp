@@ -4,11 +4,15 @@
 
 #include "InferenceEngine.h"
 
+#include <iostream>
+
+#include "Utils.h"
 
 
 InferenceEngine::InferenceEngine(const KnowledgeBase &knowledgeBase, const FactBase &factBase) {
     this->knowledgeBase = knowledgeBase;
     this->factBase = factBase;
+    this->tabs = "";
 }
 
 
@@ -19,6 +23,8 @@ double InferenceEngine::backwardChaining(Fact &goal) {
     if ( 1 <= currentCertaintyFactor && currentCertaintyFactor >= -1) {
         return currentCertaintyFactor;
     }
+
+    this->increaseTabs();
 
     std::vector<Rule> conflictSet = this->obtainRulesWithGivenConsequent(goal.getIdentifier());
     std::vector<double> rulesCertaintyFactors;
@@ -35,7 +41,7 @@ double InferenceEngine::backwardChaining(Fact &goal) {
             newGoals.pop_back();
             double currentGoalCertaintyFactor = this->backwardChaining(currentGoal);
             currentGoal.setCertaintyFactor(currentGoalCertaintyFactor); //TEST THIS LINE
-            this->factBase.addFact(currentGoal);
+            //this->factBase.addFact(currentGoal);
             //antecedentsCertaintyFactors.emplace_back(currentGoalCertaintyFactor);
         }
 
@@ -45,10 +51,11 @@ double InferenceEngine::backwardChaining(Fact &goal) {
         rulesCertaintyFactors.emplace_back(singleRuleFactCertaintyFactor);
 
     }
-
     const double multipleRuleFactCertaintyFactor = resolveMultipleRuleFactCertaintyFactor(goal, rulesCertaintyFactors);
 
+    this->decreaseTabs();
     goal.setCertaintyFactor(multipleRuleFactCertaintyFactor);
+    this->factBase.addFact(goal);
     return multipleRuleFactCertaintyFactor;
 
 }
@@ -56,6 +63,9 @@ double InferenceEngine::backwardChaining(Fact &goal) {
 
 
 double InferenceEngine::resolveAntecedentsCombinedCertaintyFactor(const Rule &rule) const {
+
+    std::cout << BIG_SEPARATOR << std::endl;
+    std::cout << this->tabs << "R" << rule.getIdentifier() << " (Regla Activada)" << std::endl;
 
     double antecedentsCombinedCertaintyFactor;
     std::string ruleType = rule.getRuleType();
@@ -76,6 +86,16 @@ double InferenceEngine::resolveAntecedentsCombinedCertaintyFactor(const Rule &ru
                 antecedentsCombinedCertaintyFactor = antecedentCertaintyFactor;
             }
         }
+
+        std::vector<std::string> antecedents = rule.getAntecedents();
+        std::cout << this->tabs << "\tCASO 1: ";
+        for (int i=0; i< antecedents.size(); i++) {
+            std::cout << antecedents[i];
+            if (i != antecedents.size() - 1) {
+                std::cout << " y ";
+            }
+        }
+        std::cout << ", FC=" << antecedentsCombinedCertaintyFactor << std::endl;
         return antecedentsCombinedCertaintyFactor;
 
 
@@ -88,28 +108,46 @@ double InferenceEngine::resolveAntecedentsCombinedCertaintyFactor(const Rule &ru
                 antecedentsCombinedCertaintyFactor = antecedentCertaintyFactor;
             }
         }
+
+        std::vector<std::string> antecedents = rule.getAntecedents();
+        std::cout << this->tabs << "\tCASO 1: ";
+        for (int i=0; i< antecedents.size(); i++) {
+            std::cout << antecedents[i];
+            if (i != antecedents.size() - 1) {
+                std::cout << " o ";
+            }
+        }
+        std::cout << ", FC=" << antecedentsCombinedCertaintyFactor << std::endl;
+
         return antecedentsCombinedCertaintyFactor;
     }
 
     //TODO: CHECK IF I NEED TO RETURN A VALUE IN CASE OF ERROR
     // AND IF I NEED TO THROW AN EXCEPTION OR DO SOMETHING ELSE
-    return 0.0;
+    return DEFAULT_RULE_CERTAINTY_FACTOR;
 }
 
 
 
-double InferenceEngine::resolveSingleRuleFactCertaintyFactor(const Rule &rule, const Fact &goal, const double antecedentsCertaintyFactors) {
+double InferenceEngine::resolveSingleRuleFactCertaintyFactor(const Rule &rule, const Fact &goal, double antecedentsCertaintyFactors) const {
 
     const double ruleCertaintyFactor = rule.getCertaintyFactor();
-    return (ruleCertaintyFactor * std::max(0.0, antecedentsCertaintyFactors));
+    const double resolvedCertaintyFactor = (ruleCertaintyFactor * std::max(DEFAULT_RULE_CERTAINTY_FACTOR, antecedentsCertaintyFactors)) + 0.0;
+
+    std::cout << this->tabs << "\tCASO 3: " << rule.getConsequent() << ", FC=" << resolvedCertaintyFactor << std::endl;
+
+    return resolvedCertaintyFactor;
+
+    //TODO: SUM 0.0 TO AVOID NEGATIVE 0 VALUES
     //TODO: CHECK IF STD::MAX METHODS IS AVAILABLE ON EVA WINDOWS ENVIRONMENT
 
 }
 
 
 
-double InferenceEngine::resolveMultipleRuleFactCertaintyFactor(const Fact &goal, std::vector<double>& rulesCertaintyFactors) {
+double InferenceEngine::resolveMultipleRuleFactCertaintyFactor(const Fact &goal, std::vector<double>& rulesCertaintyFactors) const {
 
+    bool needToPrint = false;
     while (rulesCertaintyFactors.size() > 1) {
         double firstRuleCertaintyFactor = rulesCertaintyFactors.back();
         rulesCertaintyFactors.pop_back();
@@ -126,9 +164,22 @@ double InferenceEngine::resolveMultipleRuleFactCertaintyFactor(const Fact &goal,
         }
 
         rulesCertaintyFactors.emplace_back(multipleRuleCertaintyFactor);
+        needToPrint = true;
     }
-    //TODO: CHECK WHETHER I NEED TO RETURN 0.0 OR ANOTHER VALUE
-    return rulesCertaintyFactors.empty() ? 0.0 : rulesCertaintyFactors.back();
+
+    double factCertaintyFactor = rulesCertaintyFactors.empty() ? DEFAULT_RULE_CERTAINTY_FACTOR : rulesCertaintyFactors.back();
+
+    if (needToPrint) {
+        std::cout << this->tabs << "CASO 2: " << goal.getIdentifier() << ", FC=" << factCertaintyFactor << std::endl;
+        //TODO: CHECK WHETHER I NEED TO RETURN 0.0 OR ANOTHER VALUE
+        // THIS IS THE CASE IN WHICH NO RULE HAS THE GOAL AS CONSEQUENT
+        // SO I NEED TO DETERMINE WHETHER NO HAVING THE GOAL IN THE FACTBASE NOR
+        // HAVING ANY RULE WITH THE GOAL AS CONSEQUENT MEANS THAT THE CERTAINTY FACTOR
+        // OF THE GOAL IS 0.0 (WE DONT KNOW ANYTHING ABOUT IT) OR -1.0 (WE KNOW FOR SURE
+        // THAT THE GOAL IS NOT GONNA TAKE PLACE)
+    }
+
+    return factCertaintyFactor;
 }
 
 
@@ -153,4 +204,13 @@ double InferenceEngine::abs(const double value) {
     } else {
         return value;
     }
+}
+
+void InferenceEngine::increaseTabs() {
+    this->tabs += "\t\t";
+}
+
+void InferenceEngine::decreaseTabs() {
+    this->tabs.pop_back();
+    this->tabs.pop_back();
 }
