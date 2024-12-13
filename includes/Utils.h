@@ -30,7 +30,7 @@ const std::string BIG_SEPARATOR = "=============================================
  * @param path2 the path of the fact base file.
  * @param goal the goal fact.
  */
-void printLogHeader(const std::filesystem::path& path1, const std::filesystem::path& path2, const Fact& goal);
+void printLogHeader(const std::string& path1, const std::string& path2, const Fact& goal);
 
 /**
  * Method to print the footer of the log file.
@@ -39,5 +39,13 @@ void printLogHeader(const std::filesystem::path& path1, const std::filesystem::p
  */
 void printLogFooter(const Fact& goal);
 
+
+/**
+ * Method to get the stem of a path.
+ *
+ * @param path the path.
+ * @return the stem of the path.
+ */
+std::string stem(const std::string& path);
 
 #endif //UTILS_H

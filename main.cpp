@@ -18,15 +18,15 @@ int main(int argc, char *argv[]) {
 
         for (int i = 2; i < argc; i++){
 
-            std::filesystem::path path1(argv[1]);
-            std::filesystem::path path2(argv[i]);
+            std::string path1(argv[1]);
+            std::string path2(argv[i]);
 
-            std::cout << "Processing KnowledgeBase: " << path1.stem() << std::endl;
-            std::cout << "Processing FactBase: " << path2.stem() << std::endl;
+            std::cout << "Processing KnowledgeBase: " << stem(path1) << std::endl;
+            std::cout << "Processing FactBase: " << stem(path2) << std::endl;
             std::cout << std::endl;
 
             std::string outputFileName;
-            outputFileName = path1.stem().string() + "_" + path2.stem().string() + LOG_FILE_EXTENSION;
+            outputFileName = stem(path1) + "_" + stem(path2) + LOG_FILE_EXTENSION;
 
             std::ofstream outputFile(outputFileName);
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
             InferenceEngine inferenceEngine(knowledgeBase, factBase);
             Fact goal = factBase.getGoal();
 
-            printLogHeader(path1.stem(), path2.stem(), goal);
+            printLogHeader(stem(path1), stem(path2), goal);
 
             inferenceEngine.backwardChaining(goal);
 
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
 
     } else {
 
-        std::string binaryRelativePath = std::filesystem::path(argv[0]).filename().string();
+        std::string binaryRelativePath = stem(argv[0]);
 
             std::cerr << "Error: No se han proporcionado suficientes argumentos. "
                     << "Por favor, introduzca al menos dos ficheros de entrada." << std::endl

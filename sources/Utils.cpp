@@ -6,12 +6,12 @@
 
 #include "InferenceEngine.h"
 
-void printLogHeader(const std::filesystem::path &path1, const std::filesystem::path& path2, const Fact& goal){
+void printLogHeader(const std::string &path1, const std::string& path2, const Fact& goal){
 
     std::cout<< SMALL_SEPARATOR << std::endl;
-    std::cout << "BASE DE CONOCIMIENTOS: " << path1.stem() << std::endl;
+    std::cout << "BASE DE CONOCIMIENTOS: " << stem(path1) << std::endl;
     std::cout << SMALL_SEPARATOR << std::endl;
-    std::cout << "BASE DE HECHOS: " << path2.stem() << std::endl;
+    std::cout << "BASE DE HECHOS: " << stem(path2) << std::endl;
     std::cout << SMALL_SEPARATOR << std::endl;
     std::cout << "OBJETIVO: " << goal.getIdentifier()  << std::endl;
     std::cout << SMALL_SEPARATOR << std::endl;
@@ -28,4 +28,12 @@ void printLogFooter(const Fact& goal){
     std::cout << goal.getIdentifier() << ", FC=" << goal.getCertaintyFactor() << std::endl;
     std::cout << SMALL_SEPARATOR << std::endl;
 
+}
+
+std::string stem(const std::string& path) {
+    size_t lastSlash = path.find_last_of("/\\");
+    std::string fileName = (lastSlash == std::string::npos) ? path : path.substr(lastSlash + 1);
+
+    size_t lastDot = fileName.find_last_of(".");
+    return (lastDot == std::string::npos) ? fileName : fileName.substr(0, lastDot);
 }
