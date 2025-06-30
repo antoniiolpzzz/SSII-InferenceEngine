@@ -1,171 +1,171 @@
-# Manual de Usuario - Motor de Inferencia SBR
+# User Manual - SBR Inference Engine
 
-## Descripción General
-Este motor de inferencia implementa un sistema basado en reglas (SBR) con encadenamiento hacia atrás y factores de certeza. El sistema está desarrollado en C++ y permite procesar bases de conocimientos y hechos para inferir conclusiones.
+## General Description
+This inference engine implements a rule-based system (RBS) with backward chaining and certainty factors. The system is developed in C++ and allows processing knowledge bases and facts to infer conclusions.
 
-## Requisitos
-- Compilador C++ con soporte para C++17 o superior
-- Git instalado (en caso de que se requiera clonar el repositorio)
+## Requirements
+- C++ compiler with support for C++17 or higher
+- Git installed (if you need to clone the repository)
 - Code::Blocks 20.3
 
-## Estructura del Repositorio
+## Repository Structure
 
 ```
-├── includes/           # Archivos de cabecera (.h)
-├── sources/           # Archivos fuente (.cpp)  
-└── main.cpp          # Punto de entrada del programa
+├── includes/           # Header files (.h)
+├── sources/            # Source files (.cpp)
+└── main.cpp            # Program entry point
 ```
 
-## Clases Principales
+## Main Classes
 
 ### 1. Fact
-Representa un hecho con:
-- Identificador
-- Factor de certeza
+Represents a fact with:
+- Identifier
+- Certainty factor
 
-### 2. FactBase 
-Gestiona la base de hechos:
-- Almacena hechos
-- Permite consulta y adición de hechos
-- Maneja el hecho objetivo
+### 2. FactBase
+Manages the fact base:
+- Stores facts
+- Allows querying and adding facts
+- Handles the goal fact
 
 ### 3. Rule
-Representa una regla con:
-- Identificador 
-- Antecedentes
-- Consecuente
-- Factor de certeza
-- Tipo de regla (AND/OR)
+Represents a rule with:
+- Identifier
+- Antecedents
+- Consequent
+- Certainty factor
+- Rule type (AND/OR)
 
 ### 4. KnowledgeBase
-Gestiona la base de conocimiento:
-- Almacena reglas
-- Permite consulta de reglas
+Manages the knowledge base:
+- Stores rules
+- Allows querying rules
 
-### 5. InferenceEngine 
-Implementa el motor de inferencia:
-- Algoritmo de encadenamiento hacia atrás
-- Cálculo de factores de certeza
-- Resolución de conflictos
+### 5. InferenceEngine
+Implements the inference engine:
+- Backward chaining algorithm
+- Certainty factor calculation
+- Conflict resolution
 
-## Formato de Archivos de Entrada
+## Input File Format
 
-### Base de Conocimientos (.bc)
+### Knowledge Base (.bc)
 ```
-<número_de_reglas>
-R1: Si <antecedente> Entonces <consecuente>, FC=<factor>
-R2: Si <antecedente1> y <antecedente2> Entonces <consecuente>, FC=<factor>
-R3: Si <antecedente1> o <antecedente2> Entonces <consecuente>, FC=<factor>
+<number_of_rules>
+R1: If <antecedent> Then <consequent>, CF=<factor>
+R2: If <antecedent1> and <antecedent2> Then <consequent>, CF=<factor>
+R3: If <antecedent1> or <antecedent2> Then <consequent>, CF=<factor>
 ...
 ```
 
-### Base de Hechos (.bh)
+### Fact Base (.bh)
 ```
-<número_de_hechos>
-<hecho1>, FC=<factor>
-<hecho2>, FC=<factor>
+<number_of_facts>
+<fact1>, CF=<factor>
+<fact2>, CF=<factor>
 ...
-Objetivo
-<objetivo>
+Goal
+<goal>
 ```
 
-## Uso del Programa
+## Program Usage
 
-### Compilación
-Importar el proyecto Code::Blocks 20.03 y llevar a cabo la compilacion. Por defecto  se ha configurado la compilación usando el estandar c++17 y usando linkado estatico, pues la version de GCC y Code::Blocks que ofrece el entorno Windows EVA presenta grandes fallas de linkado y de acceso a librerias estandar del sistema. Por lo tanto es necesario marcar las opciones ```-std=c++17``` y ```-static``` en caso de que no se encuentren marcadas
+### Compilation
+Import the project into Code::Blocks 20.03 and compile it. By default, the compilation is configured to use the C++17 standard and static linking, since the GCC and Code::Blocks version provided by the EVA Windows environment has major linking and standard library access issues. Therefore, make sure the options `-std=c++17` and `-static` are enabled if they are not already.
 
-
-### Ejecución
+### Execution
 ```bash
-.\<nombre_ejecutable> <base_conocimientos> <base_hechos1> [<base_hechos2> ...]
+.\<executable_name> <knowledge_base> <fact_base1> [<fact_base2> ...]
 ```
 
-### Salida
-El programa genera archivos .log con:
-- Registro del proceso de inferencia
-- Factores de certeza calculados
-- Resultado final para el objetivo
+### Output
+The program generates .log files with:
+- Record of the inference process
+- Calculated certainty factors
+- Final result for the goal
 
-## Mensajes de Error Comunes
+## Common Error Messages
 
-1. "Formato de archivo de entrada inválido"
-   - Revise el formato de los archivos .bc y .bh
+1. "Invalid input file format"
+   - Check the format of the .bc and .bh files
 
-2. "No se han proporcionado suficientes argumentos"
-   - Asegúrese de proporcionar al menos una base de conocimientos y una base de hechos
+2. "Not enough arguments provided"
+   - Make sure to provide at least one knowledge base and one fact base
 
-## Ejemplos de Uso
+## Usage Examples
 
 ```bash
-# Procesar una base de hechos
-".\SSII - InferenceEngine" ejemplo.bc ejemplo.bh
+# Process a fact base
+".\SSII - InferenceEngine" example.bc example.bh
 
-# Procesar múltiples bases de hechos
-".\SSII - InferenceEngine" ejemplo.bc ejemplo1.bh ejemplo2.bh
+# Process multiple fact bases
+".\SSII - InferenceEngine" example.bc example1.bh example2.bh
 ```
 
-## Formato de Salida
+## Output Format
 
-El sistema genera una salida estructurada en archivos .log con el siguiente formato:
+The system generates a structured output in .log files with the following format:
 
-### 1. Cabecera
+### 1. Header
 ```
 ··································
-BASE DE CONOCIMIENTOS: "<nombre_BC>"
+KNOWLEDGE BASE: "<KB_name>"
 ··································
-BASE DE HECHOS: "<nombre_BH>"
+FACT BASE: "<FB_name>"
 ··································
-OBJETIVO: <objetivo>
+GOAL: <goal>
 ··································
 ```
 
-### 2. Proceso de Inferencia
-Para cada regla activada durante el proceso, se muestra:
+### 2. Inference Process
+For each rule triggered during the process, the following is shown:
 
 ```
 ======================================================================
-<tabs>R<num> (Regla Activada)
-<tabs>    CASO 1 (si es necesario): <antecedentes>, FC=<factor>     # Evaluación de antecedentes
-<tabs>    CASO 3: <consecuente>, FC=<factor>      					# Aplicación de la regla
-<tabs>CASO 2 (si es necesario): <consecuente>, FC=<factor>          # Combinación de reglas (si aplica)
+<tabs>R<num> (Rule Triggered)
+<tabs>    CASE 1 (if necessary): <antecedents>, CF=<factor>     # Antecedent evaluation
+<tabs>    CASE 3: <consequent>, CF=<factor>                    # Rule application
+<tabs>CASE 2 (if necessary): <consequent>, CF=<factor>         # Rule combination (if applicable)
 ======================================================================
 ```
 
-Donde:
-- **CASO 1**: Muestra la evaluación de los antecedentes combinados
-  - Para reglas AND: muestra antecedentes unidos por "y"
-  - Para reglas OR: muestra antecedentes unidos por "o"
-  - FC = factor de certeza resultante de la combinación
+Where:
+- **CASE 1**: Shows the evaluation of the combined antecedents
+  - For AND rules: shows antecedents joined by "and"
+  - For OR rules: shows antecedents joined by "or"
+  - CF = certainty factor resulting from the combination
 
-- **CASO 2**: Aparece cuando se combinan múltiples reglas para el mismo consecuente
-  - Muestra el factor de certeza final tras combinar las reglas
+- **CASE 2**: Appears when multiple rules are combined for the same consequent
+  - Shows the final certainty factor after combining the rules
 
-- **CASO 3**: Muestra el resultado de aplicar una regla individual
-  - FC = factor de certeza calculado para el consecuente
+- **CASE 3**: Shows the result of applying an individual rule
+  - CF = certainty factor calculated for the consequent
 
-### 3. Resultado Final
+### 3. Final Result
 ```
-RESULTADO OBTENIDO EN EL PROCESO DE INFERENCIA:
+RESULT OBTAINED IN THE INFERENCE PROCESS:
 
 ··································
-<objetivo>, FC=<factor_final>
+<goal>, CF=<final_factor>
 ··································
 ```
 
-La indentación (tabs) en el log indica la profundidad en el árbol de inferencia, permitiendo seguir visualmente el proceso de razonamiento del sistema.
+The indentation (tabs) in the log indicates the depth in the inference tree, allowing you to visually follow the system's reasoning process.
 
-Ademas, la profundidad asigna una jerarquia hacia abajo. Esto significa que evaluaciones tabuladas en el mismo nivel, las cuales tienen una evaluacion inmediatamente debajo y esta presenta una tabulacion inferior a la de estas dos, son evaluaciones requeridas para llevar a cabo la evaluación de esta ultima.
+Additionally, the depth assigns a downward hierarchy. This means that evaluations indented at the same level, which have an immediately following evaluation with a lower indentation, are required evaluations for that last one.
 
-## Notas Importantes
+## Important Notes
 
-- Los factores de certeza deben estar en el rango [-1,1]
-- Las reglas admiten operadores "y"/"o" para antecedentes múltiples
-- El sistema utiliza encadenamiento hacia atrás desde el objetivo
-- Se generan archivos .log detallados del proceso de inferencia
+- Certainty factors must be in the range [-1,1]
+- Rules support "and"/"or" operators for multiple antecedents
+- The system uses backward chaining from the goal
+- Detailed .log files of the inference process are generated
 
-## Soporte
+## Support
 
-Para reportar problemas o solicitar ayuda:
-1. Abra un issue en el repositorio
-2. Incluya los archivos de entrada y el mensaje de error
-3. Describa los pasos para reproducir el problema
+To report problems or request help:
+1. Open an issue in the repository
+2. Include the input files and the error message
+3. Describe the steps to reproduce the problem
+
